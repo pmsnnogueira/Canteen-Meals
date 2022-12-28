@@ -55,10 +55,10 @@ class _MyHomePageState extends State<MyHomePage> {
   static const String _mealsUrl = "http://amov.servehttp.com:8080/menu";
 
   static const Map<int, String> weekdayName = {1: "Monday", 2: "Tuesday", 3: "Wednesday", 4: "Thursday", 5: "Friday", 6: "Saturday", 7: "Sunday"};
-  static const Map<String, int> weekdayNumber = {"Monday": 1, "Tuesday": 2, "wednesday": 3, "Thursday" : 4 , "Friday" : 5, "Saturday": 6, "Sunday" : 7};
+  static const Map<String, int> weekdayNumber = {"monday": 1, "tuesday": 2, "wednesday": 3, "thursday" : 4 , "friday" : 5, "saturday": 6, "sunday" : 7};
 
   DateTime today = DateTime.now();    //Proprio dia que nunca é mudado
-  DateTime date = DateTime.now();
+  DateTime date = DateTime.now();     //date alteravel
   late int day;   //Dia que anda a ser escolhido pelo user
   late DateTime actualMonday;
   late String dateText = ' ';
@@ -194,6 +194,11 @@ class _MyHomePageState extends State<MyHomePage> {
               child: ListView.builder(
                 itemCount: _meals!.length,
                 itemBuilder: (context,index){
+                  var aux = DateTime.now();
+                  if(aux.day == date.day && aux.month == date.month && aux.year == date.year &&
+                    (weekdayNumber[_meals![index].originalWeekDay.toLowerCase()] ?? 0) < today.weekday){
+                    return const Offstage();
+                  }
                   if(!_meals![index].mealUpdate){
                     return Slidable(
                       startActionPane: ActionPane(
