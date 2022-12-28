@@ -38,35 +38,43 @@ class MyApp extends StatelessWidget {
 
 
 class Meal{
-  Meal.fromJson(Map<String , dynamic> json):
-        weekDay = json['weekDay'] ?? 'MONDAY',
-        soup = json['soup'] ?? 'Caldo Verde',
-        fish = json['fish'] ?? 'Sardinha',
-        meat = json['meat'] ?? 'Bife',
-        vegetarian = json['vegetarian'] ?? 'Feijao',
-        desert =  json['desert'] ?? 'Fruta';
   //final String img;
-  final String weekDay;
-  final String soup;
-  final String fish;
-  final String meat;
-  final String vegetarian;
-  final String desert;
+  final String originalWeekDay;
+  final String originalSoup;
+  final String originalFish;
+  final String originalMeat;
+  final String originalVegetarian;
+  final String originalDesert;
+
+  String updatedWeekDay = '';
+  String updatedSoup = '';
+  String updatedFish = '';
+  String updatedMeat = '';
+  String updatedVegetarian = '';
+  String updatedDesert = '';
+  bool mealUpdate = false;
+
+  Meal.fromJson(Map<String , dynamic> json):
+        originalWeekDay = json['original'] ? ['weekDay'] ?? '',
+        originalSoup = json['original'] ? ['soup'] ?? '',
+        originalFish = json['original'] ? ['fish'] ?? '',
+        originalMeat = json['original'] ? ['meat'] ?? '',
+        originalVegetarian = json['original'] ? ['vegetarian'] ?? '',
+        originalDesert =  json['original'] ? ['desert'] ?? '',
+
+        mealUpdate = (json['update'] ? ['weekDay'] ?? '').isNotEmpty{
+          updatedWeekDay = json['update'] ? ['weekDay'] ?? '';
+          updatedSoup = json['update'] ? ['soup'] ?? '';
+          updatedFish = json['update'] ? ['fish'] ?? '';
+          updatedMeat = json['update'] ? ['meat'] ?? '';
+          updatedVegetarian = json['update'] ? ['vegetarian'] ?? '';
+          updatedDesert =  json['update'] ? ['desert'] ?? '';
+        }
 }
 
 
 class MyHomePage extends StatefulWidget {
   const MyHomePage({super.key, required this.title});
-
-  // This widget is the home page of your application. It is stateful, meaning
-  // that it has a State object (defined below) that contains fields that affect
-  // how it looks.
-
-  // This class is the configuration for the state. It holds the values (in this
-  // case the title) provided by the parent (in this case the App widget) and
-  // used by the build method of the State. Fields in a Widget subclass are
-  // always marked "final".
-
   final String title;
 
   @override
@@ -78,6 +86,8 @@ class _MyHomePageState extends State<MyHomePage> {
   static const String _mealsUrl = "http://amov.servehttp.com:8080/menu";
 
   static const Map<int, String> weekdayName = {1: "Monday", 2: "Tuesday", 3: "Wednesday", 4: "Thursday", 5: "Friday", 6: "Saturday", 7: "Sunday"};
+  static const Map<String, int> weekdayNumber = {"Monday": 1, "Tuesday": 2, "wednesday": 3, "Thursday" : 4 , "Friday" : 5, "Saturday": 6, "Sunday" : 7};
+
   DateTime today = DateTime.now();    //Proprio dia que nunca é mudado
   DateTime date = DateTime.now();
   late int day;   //Dia que anda a ser escolhido pelo user
@@ -93,8 +103,15 @@ class _MyHomePageState extends State<MyHomePage> {
       http.Response response = await http.get(Uri.parse(_mealsUrl));
       if (response.statusCode == HttpStatus.ok) { // import do dart.io, não do html
         debugPrint(response.body);
-        final Map<String, dynamic> decodedData = json.decode(response.body);
-        setState(() => _meals = [Meal.fromJson(decodedData)]);
+        final mealsData = json.decode(response.body);
+        final meals = <Meal>[];
+        mealsData.forEach((weekDay, data) {
+          final meal = Meal.fromJson(data);
+          meals.add(meal);
+        });
+        setState(() => _meals = meals);
+
+        //setState(() => _meals = [Meal.fromJson(decodedData)]);
         //setState(() => _meals = [Meal.fromJson(decodedData[weekdayName[day]?.toUpperCase()]['original'])]);
       }
     } catch (e) {
@@ -208,109 +225,177 @@ class _MyHomePageState extends State<MyHomePage> {
           if (_fetchingData) const CircularProgressIndicator(),
           if (!_fetchingData && _meals != null && _meals!.isNotEmpty)
             Expanded(
-              /*child: ListView.builder(
-                itemCount: 6,
-                itemBuilder: (BuildContext context, int index) => Card( // Podias até usar logo um text em vez do list Title*/
                   child: ListView.builder(
                     itemCount: _meals!.length,
                     itemBuilder: (context,index){
-                      return Slidable(
+                     /* if(today.weekday < DateTime.parse('MONDAY').weekday) {   //Verificar se o dia da semana é menor que a o dia da meal
+                        return Container();
+                      }*/
+                        return Slidable(
                           startActionPane: ActionPane(
-                          motion: const StretchMotion(),
-                          children: [
-                            SlidableAction(
-                              backgroundColor: Colors.green,
-                              icon: Icons.edit,
-                              label: 'Edit',
-                              onPressed: (context) => _incrementWeek(),)
-                          ],
-                      ),
-                        child: Container(
-                        margin: const EdgeInsets.only(bottom: 10,top:25),
-                        //height: 320,
-                          width: double.infinity,
-                        padding:
-                        const EdgeInsets.only(left: 20, right: 20,bottom: 20),
-                        child: Container(
-                          decoration: BoxDecoration(
-                            color: const Color(0xFf363f93),
-                            borderRadius: const BorderRadius.only(
-                              bottomLeft: Radius.elliptical(80,100),
-                              topRight: Radius.elliptical(80,100),
+                            motion: const StretchMotion(),
+                            children: [
+                              SlidableAction(
+                                backgroundColor: Colors.green,
+                                icon: Icons.edit,
+                                label: 'Edit',
+                                onPressed: (context) => _incrementWeek(),)
+                            ],
+                          ),
+                          child: Container(
+                            margin: const EdgeInsets.only(bottom: 10, top: 25),
+                            //height: 320,
+                            width: double.infinity,
+                            padding:
+                            const EdgeInsets.only(
+                                left: 20, right: 20, bottom: 20),
+                            child: Container(
+                              decoration: BoxDecoration(
+                                color: const Color(0xFf363f93),
+                                borderRadius: const BorderRadius.only(
+                                  bottomLeft: Radius.elliptical(80, 100),
+                                  topRight: Radius.elliptical(80, 100),
+                                ),
+                                boxShadow: [
+                                  BoxShadow(
+                                      color: const Color(0xFf363f93)
+                                          .withOpacity(0.6),
+                                      offset: const Offset(-10.0, 0.0),
+                                      blurRadius: 10,
+                                      spreadRadius: 2),
+                                ],
+                              ),
+                              padding: const EdgeInsets.only(
+                                left: 32,
+                                top: 50.0,
+                                bottom: 50,
+                              ),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: <Widget>[
+                                  //Fazer o if para verificar se há atualizados
+                                  if(!_meals![index].mealUpdate)...{
+                                    Text(
+                                      _meals![index].originalWeekDay,
+                                      style: const TextStyle(
+                                          color: Colors.white,
+                                          fontSize: 25,
+                                          fontWeight: FontWeight.bold),
+                                    ),
+                                    const SizedBox(
+                                      height: 15,
+                                    ),
+                                    Text("Soup: ${_meals![index].originalSoup}",
+                                      style: const TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 19,
+                                      ),
+                                    ),
+                                    const SizedBox(
+                                      height: 10,
+                                    ),
+                                    Text("Meat: ${_meals![index].originalMeat}",
+                                      style: const TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 19,
+                                      ),
+                                    ),
+                                    const SizedBox(
+                                      height: 10,
+                                    ),
+                                    Text(
+                                      "Fish: ${_meals![index].originalFish}",
+                                      style: const TextStyle(
+                                          color: Colors.white,
+                                          fontSize: 19),
+                                    ),
+                                    const SizedBox(
+                                      height: 10,
+                                    ),
+                                    Text("Vegetarian: ${_meals![index]
+                                        .originalVegetarian}",
+                                      style: const TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 19,
+                                      ),
+                                    ),
+                                    const SizedBox(
+                                      height: 10,
+                                    ),
+                                    Text("Desert: ${_meals![index]
+                                        .originalDesert}",
+                                      style: const TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 19,
+                                      ),
+                                    ),
+                                  } else
+                                    ...{ //Se houver um Update
+                                      Text(
+                                        _meals![index].updatedWeekDay,
+                                        style: const TextStyle(
+                                            color: Colors.white,
+                                            fontSize: 25,
+                                            fontWeight: FontWeight.bold),
+                                      ),
+                                      const SizedBox(
+                                        height: 15,
+                                      ),
+                                      Text(
+                                        "Soup: ${_meals![index].updatedSoup}",
+                                        style: const TextStyle(
+                                          color: Colors.white,
+                                          fontSize: 19,
+                                        ),
+                                      ),
+                                      const SizedBox(
+                                        height: 10,
+                                      ),
+                                      Text(
+                                        "Meat: ${_meals![index].updatedMeat}",
+                                        style: const TextStyle(
+                                          color: Colors.white,
+                                          fontSize: 19,
+                                        ),
+                                      ),
+                                      const SizedBox(
+                                        height: 10,
+                                      ),
+                                      Text(
+                                        "Fish: ${_meals![index].updatedFish}",
+                                        style: const TextStyle(
+                                            color: Colors.white,
+                                            fontSize: 19),
+                                      ),
+                                      const SizedBox(
+                                        height: 10,
+                                      ),
+                                      Text("Vegetarian: ${_meals![index]
+                                          .updatedVegetarian}",
+                                        style: const TextStyle(
+                                          color: Colors.white,
+                                          fontSize: 19,
+                                        ),
+                                      ),
+                                      const SizedBox(
+                                        height: 10,
+                                      ),
+                                      Text("Desert: ${_meals![index]
+                                          .updatedDesert}",
+                                        style: const TextStyle(
+                                          color: Colors.white,
+                                          fontSize: 19,
+                                        ),
+                                      ),
+                                    },
+                                  const SizedBox(
+                                    height: 15,
+                                  ),
+                                ],
+                              ),
                             ),
-                            boxShadow: [
-                              BoxShadow(
-                                color: const Color(0xFf363f93).withOpacity(0.6),
-                                offset: const Offset(-10.0, 0.0),
-                                blurRadius: 10,
-                                spreadRadius: 2),
-                            ],
                           ),
-                          padding: const EdgeInsets.only(
-                            left: 32,
-                            top:50.0,
-                            bottom: 50,
-                          ),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: <Widget>[
-                              Text(
-                                _meals![index].weekDay,
-                                style: const TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 25,
-                                    fontWeight: FontWeight.bold),
-                              ),
-                              const SizedBox(
-                                height: 15,
-                              ),
-                              Text("Soup: ${_meals![index].soup}",
-                                style: const TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 19,
-                                ),
-                              ),
-                              const SizedBox(
-                                height: 10,
-                              ),
-                              Text("Meat: ${_meals![index].meat}",
-                              style: const TextStyle(
-                                color: Colors.white,
-                                fontSize: 19,
-                              ),
-                              ),
-                              const SizedBox(
-                                height: 10,
-                              ),
-                              Text(
-                                "Fish: ${_meals![index].fish}",
-                                style: const TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 19),
-                              ),
-                              const SizedBox(
-                                height: 10,
-                              ),
-                              Text("Vegetarian: ${_meals![index].vegetarian}",
-                                style: const TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 19,
-                                ),
-                              ),
-                              const SizedBox(
-                                height: 10,
-                              ),
-                              Text("Desert: ${_meals![index].desert}",
-                                style: const TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 19,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                      );
+                        );
                       },
                   ),
                 ),
