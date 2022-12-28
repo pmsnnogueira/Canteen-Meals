@@ -1,5 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
+import 'package:canteen_meals/Meal.dart';
+import 'package:canteen_meals/MyWidgets.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
@@ -35,44 +37,6 @@ class MyApp extends StatelessWidget {
   }
 }
 
-
-
-class Meal{
-  //final String img;
-  final String originalWeekDay;
-  final String originalSoup;
-  final String originalFish;
-  final String originalMeat;
-  final String originalVegetarian;
-  final String originalDesert;
-
-  String updatedWeekDay = '';
-  String updatedSoup = '';
-  String updatedFish = '';
-  String updatedMeat = '';
-  String updatedVegetarian = '';
-  String updatedDesert = '';
-  bool mealUpdate = false;
-
-  Meal.fromJson(Map<String , dynamic> json):
-        originalWeekDay = json['original'] ? ['weekDay'] ?? '',
-        originalSoup = json['original'] ? ['soup'] ?? '',
-        originalFish = json['original'] ? ['fish'] ?? '',
-        originalMeat = json['original'] ? ['meat'] ?? '',
-        originalVegetarian = json['original'] ? ['vegetarian'] ?? '',
-        originalDesert =  json['original'] ? ['desert'] ?? '',
-
-        mealUpdate = (json['update'] ? ['weekDay'] ?? '').isNotEmpty{
-          updatedWeekDay = json['update'] ? ['weekDay'] ?? '';
-          updatedSoup = json['update'] ? ['soup'] ?? '';
-          updatedFish = json['update'] ? ['fish'] ?? '';
-          updatedMeat = json['update'] ? ['meat'] ?? '';
-          updatedVegetarian = json['update'] ? ['vegetarian'] ?? '';
-          updatedDesert =  json['update'] ? ['desert'] ?? '';
-        }
-}
-
-
 class MyHomePage extends StatefulWidget {
   const MyHomePage({super.key, required this.title});
   final String title;
@@ -80,6 +44,11 @@ class MyHomePage extends StatefulWidget {
   @override
   State<MyHomePage> createState() => _MyHomePageState();
 }
+
+
+
+
+
 
 class _MyHomePageState extends State<MyHomePage> {
 
@@ -95,6 +64,7 @@ class _MyHomePageState extends State<MyHomePage> {
   late String dateText = ' ';
 
 
+  /// This functions connects with the website and converts the json to an list of meals.
   List<Meal>? _meals = [];
   bool _fetchingData = false;
   Future<void> _fetchMeals() async {
@@ -102,7 +72,6 @@ class _MyHomePageState extends State<MyHomePage> {
       setState(() => _fetchingData = true);
       http.Response response = await http.get(Uri.parse(_mealsUrl));
       if (response.statusCode == HttpStatus.ok) { // import do dart.io, não do html
-        debugPrint(response.body);
         final mealsData = json.decode(response.body);
         final meals = <Meal>[];
         mealsData.forEach((weekDay, data) {
@@ -110,9 +79,6 @@ class _MyHomePageState extends State<MyHomePage> {
           meals.add(meal);
         });
         setState(() => _meals = meals);
-
-        //setState(() => _meals = [Meal.fromJson(decodedData)]);
-        //setState(() => _meals = [Meal.fromJson(decodedData[weekdayName[day]?.toUpperCase()]['original'])]);
       }
     } catch (e) {
       debugPrint('Something went wrong: $e');
@@ -201,8 +167,8 @@ class _MyHomePageState extends State<MyHomePage> {
                   onPressed: () async {
                     _decrementWeek();
                     _fetchMeals();
-                    debugPrint('Card -> $_meals');
-                    debugPrint('Week -> ${date.toString()}');
+                    //debugPrint('Card -> $_meals');
+                    //debugPrint('Week -> ${date.toString()}');
                     //Map<String, dynamic> mondayMeal = await getMealForDay(_mealsUrl, 'MONDAY');
                   },
               ),
@@ -225,240 +191,46 @@ class _MyHomePageState extends State<MyHomePage> {
           if (_fetchingData) const CircularProgressIndicator(),
           if (!_fetchingData && _meals != null && _meals!.isNotEmpty)
             Expanded(
-                  child: ListView.builder(
-                    itemCount: _meals!.length,
-                    itemBuilder: (context,index){
-                     /* if(today.weekday < DateTime.parse('MONDAY').weekday) {   //Verificar se o dia da semana é menor que a o dia da meal
-                        return Container();
-                      }*/
-                        return Slidable(
-                          startActionPane: ActionPane(
-                            motion: const StretchMotion(),
-                            children: [
-                              SlidableAction(
-                                backgroundColor: Colors.green,
-                                icon: Icons.edit,
-                                label: 'Edit',
-                                onPressed: (context) => _incrementWeek(),)
-                            ],
-                          ),
-                          child: Container(
-                            margin: const EdgeInsets.only(bottom: 10, top: 25),
-                            //height: 320,
-                            width: double.infinity,
-                            padding:
-                            const EdgeInsets.only(
-                                left: 20, right: 20, bottom: 20),
-                            child: Container(
-                              decoration: BoxDecoration(
-                                color: const Color(0xFf363f93),
-                                borderRadius: const BorderRadius.only(
-                                  bottomLeft: Radius.elliptical(80, 100),
-                                  topRight: Radius.elliptical(80, 100),
-                                ),
-                                boxShadow: [
-                                  BoxShadow(
-                                      color: const Color(0xFf363f93)
-                                          .withOpacity(0.6),
-                                      offset: const Offset(-10.0, 0.0),
-                                      blurRadius: 10,
-                                      spreadRadius: 2),
-                                ],
-                              ),
-                              padding: const EdgeInsets.only(
-                                left: 32,
-                                top: 50.0,
-                                bottom: 50,
-                              ),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: <Widget>[
-                                  //Fazer o if para verificar se há atualizados
-                                  if(!_meals![index].mealUpdate)...{
-                                    Text(
-                                      _meals![index].originalWeekDay,
-                                      style: const TextStyle(
-                                          color: Colors.white,
-                                          fontSize: 25,
-                                          fontWeight: FontWeight.bold),
-                                    ),
-                                    const SizedBox(
-                                      height: 15,
-                                    ),
-                                    Text("Soup: ${_meals![index].originalSoup}",
-                                      style: const TextStyle(
-                                        color: Colors.white,
-                                        fontSize: 19,
-                                      ),
-                                    ),
-                                    const SizedBox(
-                                      height: 10,
-                                    ),
-                                    Text("Meat: ${_meals![index].originalMeat}",
-                                      style: const TextStyle(
-                                        color: Colors.white,
-                                        fontSize: 19,
-                                      ),
-                                    ),
-                                    const SizedBox(
-                                      height: 10,
-                                    ),
-                                    Text(
-                                      "Fish: ${_meals![index].originalFish}",
-                                      style: const TextStyle(
-                                          color: Colors.white,
-                                          fontSize: 19),
-                                    ),
-                                    const SizedBox(
-                                      height: 10,
-                                    ),
-                                    Text("Vegetarian: ${_meals![index]
-                                        .originalVegetarian}",
-                                      style: const TextStyle(
-                                        color: Colors.white,
-                                        fontSize: 19,
-                                      ),
-                                    ),
-                                    const SizedBox(
-                                      height: 10,
-                                    ),
-                                    Text("Desert: ${_meals![index]
-                                        .originalDesert}",
-                                      style: const TextStyle(
-                                        color: Colors.white,
-                                        fontSize: 19,
-                                      ),
-                                    ),
-                                  } else
-                                    ...{ //Se houver um Update
-                                      Text(
-                                        _meals![index].updatedWeekDay,
-                                        style: const TextStyle(
-                                            color: Colors.white,
-                                            fontSize: 25,
-                                            fontWeight: FontWeight.bold),
-                                      ),
-                                      const SizedBox(
-                                        height: 15,
-                                      ),
-                                      Text(
-                                        "Soup: ${_meals![index].updatedSoup}",
-                                        style: const TextStyle(
-                                          color: Colors.white,
-                                          fontSize: 19,
-                                        ),
-                                      ),
-                                      const SizedBox(
-                                        height: 10,
-                                      ),
-                                      Text(
-                                        "Meat: ${_meals![index].updatedMeat}",
-                                        style: const TextStyle(
-                                          color: Colors.white,
-                                          fontSize: 19,
-                                        ),
-                                      ),
-                                      const SizedBox(
-                                        height: 10,
-                                      ),
-                                      Text(
-                                        "Fish: ${_meals![index].updatedFish}",
-                                        style: const TextStyle(
-                                            color: Colors.white,
-                                            fontSize: 19),
-                                      ),
-                                      const SizedBox(
-                                        height: 10,
-                                      ),
-                                      Text("Vegetarian: ${_meals![index]
-                                          .updatedVegetarian}",
-                                        style: const TextStyle(
-                                          color: Colors.white,
-                                          fontSize: 19,
-                                        ),
-                                      ),
-                                      const SizedBox(
-                                        height: 10,
-                                      ),
-                                      Text("Desert: ${_meals![index]
-                                          .updatedDesert}",
-                                        style: const TextStyle(
-                                          color: Colors.white,
-                                          fontSize: 19,
-                                        ),
-                                      ),
-                                    },
-                                  const SizedBox(
-                                    height: 15,
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
-                        );
-                      },
-                  ),
-                ),
-          ],
-          )
-      );
-            /*Expanded(
-              child: ListView.separated(
+              child: ListView.builder(
                 itemCount: _meals!.length,
-                separatorBuilder: (_, __) => const Divider(thickness: 2.0),
-                itemBuilder: (BuildContext context, int index) => ListTile( // Podias até usar logo um text em vez do list Title
-                  title: Text('WeekDay ${_meals![index].weekDay}'),
-                  subtitle: Text(_meals![index].soup),
-                ),
+                itemBuilder: (context,index){
+                  if(!_meals![index].mealUpdate){
+                    return Slidable(
+                      startActionPane: ActionPane(
+                        motion: const StretchMotion(),
+                        children: [
+                          SlidableAction(
+                            backgroundColor: Colors.green,
+                            icon: Icons.edit,
+                            label: 'Edit',
+                            onPressed: (context) => _incrementWeek(),
+                          )
+                        ],
+                      ),
+                      child: MealsOriginalWidget(_meals![index]),
+                    );
+                  }else{
+                    return Slidable(
+                      startActionPane: ActionPane(
+                        motion: const StretchMotion(),
+                        children: [
+                          SlidableAction(
+                            backgroundColor: Colors.green,
+                            icon: Icons.edit,
+                            label: 'Edit',
+                            onPressed: (context) => _incrementWeek(),
+                          )
+                        ],
+                      ),
+                      child: MealsUpdatedWidget(_meals![index]),
+                    );
+                  }
+
+                },
               ),
-            )*/
-
-
-
-
-
-        // Center is a layout widget. It takes a single child and positions it
-        // in the middle of the parent.
-        /*child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                FloatingActionButton.extended(
-                    label: const Text('<'),
-                    onPressed: (){}
-                ),
-                const SizedBox(
-                  width: 20,
-                ),
-                const Text('Data da semana'),
-                const SizedBox(
-                  width: 20,
-                ),
-                FloatingActionButton.extended(
-                    label: const Text('>'),
-                    onPressed: (){}
-                ),
-              ],
-            ),
-
-
-            const Text(
-              'You have pushed the button this many times:',
             ),
           ],
-        ),
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
-        tooltip: 'Increment',
-        child: const Icon(Icons.add),
-      ), // This trailing comma makes auto-formatting nicer for build methods.
-
-    );
-
-*/
-
+        )
+      );
   }
 }
