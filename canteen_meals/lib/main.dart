@@ -23,15 +23,6 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Canteen Meals',
       theme: ThemeData(
-        // This is the theme of your application.
-        //
-        // Try running your application with "flutter run". You'll see the
-        // application has a blue toolbar. Then, without quitting the app, try
-        // changing the primarySwatch below to Colors.green and then invoke
-        // "hot reload" (press "r" in the console where you ran "flutter run",
-        // or simply save your changes to "hot reload" in a Flutter IDE).
-        // Notice that the counter didn't reset back to zero; the application
-        // is not restarted.
         primarySwatch: Colors.container,
       ),
       initialRoute: MyHomePage.routeName,
@@ -80,7 +71,7 @@ class _MyHomePageState extends State<MyHomePage> {
       setState(() => _fetchingData = true);
       http.Response response = await http.get(Uri.parse(_mealsUrl));
       if (response.statusCode == HttpStatus.ok) { // import do dart.io, não do html
-        final mealsData = json.decode(response.body);
+        final mealsData = json.decode(utf8.decode(response.body.codeUnits));
         final meals = <Meal>[];
         mealsData.forEach((weekDay, data) {
           final meal = Meal.fromJson(data);

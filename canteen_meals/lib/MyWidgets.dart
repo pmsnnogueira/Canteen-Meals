@@ -21,12 +21,12 @@ class _MealsOriginalWidget extends State<MealsOriginalWidget> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: const EdgeInsets.only(bottom: 10, top: 25),
+      margin: const EdgeInsets.only(bottom: 1, top: 20),
       //height: 320,
       width: double.infinity,
       padding:
       const EdgeInsets.only(
-          left: 20, right: 20, bottom: 20),
+          left: 20, right: 20, bottom: 10),
       child: Container(
         decoration: BoxDecoration(
           color: const Color(0xFf363f93),
@@ -148,8 +148,8 @@ class _MealsUpdatedWidget extends State<MealsUpdatedWidget> {
         decoration: BoxDecoration(
           color: const Color(0xff7b7126),
           borderRadius: const BorderRadius.only(
-            bottomLeft: Radius.elliptical(80, 100),
-            topRight: Radius.elliptical(80, 100),
+            topLeft: Radius.elliptical(80, 100),
+            bottomRight: Radius.elliptical(80, 100),
           ),
           boxShadow: [
             BoxShadow(
