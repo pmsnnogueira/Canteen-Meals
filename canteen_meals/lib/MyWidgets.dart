@@ -173,7 +173,7 @@ class _MealsUpdatedWidget extends State<MealsUpdatedWidget> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
-            if(widget.meal.originalImg.isNotEmpty)...{
+            if(widget.meal.updatedImg.isNotEmpty)...{
               CircleAvatar(
                 radius: 72.0,
                 backgroundColor: Colors.transparent,
