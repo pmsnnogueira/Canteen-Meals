@@ -7,6 +7,8 @@ import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 
+import 'EditScreen.dart';
+
 
 void main() {
   runApp(const MyApp());
@@ -32,7 +34,12 @@ class MyApp extends StatelessWidget {
         // is not restarted.
         primarySwatch: Colors.container,
       ),
-      home: const MyHomePage(title: 'Canteen Meals'),
+      initialRoute: MyHomePage.routeName,
+      routes:{
+        MyHomePage.routeName : (context) => MyHomePage(title: 'Canteen Meals'),
+        //EditScreen.routName : (context) => EditScreen(),
+      },
+      debugShowCheckedModeBanner: false,
     );
   }
 }
@@ -40,6 +47,8 @@ class MyApp extends StatelessWidget {
 class MyHomePage extends StatefulWidget {
   const MyHomePage({super.key, required this.title});
   final String title;
+
+  static const String routeName = '/';
 
   @override
   State<MyHomePage> createState() => _MyHomePageState();
@@ -59,7 +68,6 @@ class _MyHomePageState extends State<MyHomePage> {
 
   DateTime today = DateTime.now();    //Proprio dia que nunca é mudado
   DateTime date = DateTime.now();     //date alteravel
-  late int day;   //Dia que anda a ser escolhido pelo user
   late DateTime actualMonday;
   late String dateText = ' ';
 
@@ -90,18 +98,14 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   void initState() {
     super.initState();
-    day = today.weekday;    //Dia atual da semana em String ex -> monday
-    //actualWeek = DateFormat('dd/MM/yyyy').format(today);      //Semana Atual ex -> 27/12/2022
-
     // Get the first day of the week (Monday)
     actualMonday = today.weekday == 7 ? today.add(Duration(days: 1)) : today.subtract(Duration(days: today.weekday - 1));
-    debugPrint(today.toString());
-
     dateText = DateFormat('dd/MM/yyyy').format(today);
 
     _fetchMeals();
   }
 
+  ///_decrementWeek functions is used to decrement the week
   void _decrementWeek() {
     setState(() {
       if (date.isAfter(today)) { //Passa para a proxima segunda Feira
@@ -122,6 +126,7 @@ class _MyHomePageState extends State<MyHomePage> {
     });
   }
 
+  ///_incrementWeek functions is used to increment the week
   void _incrementWeek() {
     setState(() {
       if (date.isAfter(today) || date == today) { //Passa para a proxima segunda Feira
@@ -141,16 +146,8 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
-    // This method is rerun every time setState is called, for instance as done
-    // by the _incrementCounter method above.
-    //
-    // The Flutter framework has been optimized to make rerunning build methods
-    // fast, so that you can just rebuild anything that needs updating rather
-    // than having to individually change instances of widgets.
     return Scaffold(
       appBar: AppBar(
-        // Here we take the value from the MyHomePage object that was created by
-        // the App.build method, and use it to set our appbar title.
         title: Text(widget.title),
       ),
       body: Column(
@@ -208,7 +205,12 @@ class _MyHomePageState extends State<MyHomePage> {
                             backgroundColor: Colors.green,
                             icon: Icons.edit,
                             label: 'Edit',
-                            onPressed: (context) => _incrementWeek(),
+                            onPressed: (context) => Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => EditScreen(_meals![index]),
+                                ),
+                            ),
                           )
                         ],
                       ),
@@ -230,7 +232,6 @@ class _MyHomePageState extends State<MyHomePage> {
                       child: MealsUpdatedWidget(_meals![index]),
                     );
                   }
-
                 },
               ),
             ),

@@ -1,3 +1,8 @@
+import 'dart:convert';
+import 'dart:io';
+
+import 'package:flutter/cupertino.dart';
+
 class Meal{
   final String originalImg;
   final String originalWeekDay;
@@ -34,4 +39,35 @@ class Meal{
         updatedVegetarian = json['update'] ? ['vegetarian'] ?? '';
         updatedDesert =  json['update'] ? ['desert'] ?? '';
       }
+
+    static Future<void> mealPost(List<String> input) async {
+
+      String url = "...";
+      Map map = {
+        input[0] : {'updated' : {
+          'weekDay' : input[0],
+          'soup' : input[1],
+          'fish' : input[3],
+          'meat' : input[2],
+          'vegetarian' : input[4],
+          'desert' : input[5],
+        }}
+      };
+      debugPrint(await apiRequest(url, map));
+
+    }
+
+    static Future<String> apiRequest(String url , Map jsonMap) async{
+
+      HttpClient httpClient = new HttpClient();
+      HttpClientRequest request = await httpClient.postUrl(Uri.parse(url));
+      request.headers.set('content-type', 'application/json');
+      request.add(utf8.encode(json.encode(jsonMap)));
+      HttpClientResponse response = await request.close();
+      // Verificar o status code
+      debugPrint(response.toString());
+      String reply = await response.transform(utf8.decoder).join();
+      httpClient.close();
+      return reply;
+    }
 }

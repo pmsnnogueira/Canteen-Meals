@@ -1,8 +1,6 @@
 import 'dart:convert';
-
 import 'package:canteen_meals/Meal.dart';
 import 'package:flutter/material.dart';
-import 'dart:io' as Io;
 
 
 class MealsOriginalWidget extends StatefulWidget{
@@ -17,8 +15,6 @@ class MealsOriginalWidget extends StatefulWidget{
 
   @override
   _MealsOriginalWidget createState() => _MealsOriginalWidget();
-
-
 }
 
 class _MealsOriginalWidget extends State<MealsOriginalWidget> {
@@ -28,7 +24,6 @@ class _MealsOriginalWidget extends State<MealsOriginalWidget> {
       margin: const EdgeInsets.only(bottom: 10, top: 25),
       //height: 320,
       width: double.infinity,
-
       padding:
       const EdgeInsets.only(
           left: 20, right: 20, bottom: 20),
