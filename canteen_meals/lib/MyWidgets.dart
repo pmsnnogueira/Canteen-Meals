@@ -16,6 +16,7 @@ class _MealsOriginalWidget extends State<MealsOriginalWidget> {
       margin: const EdgeInsets.only(bottom: 10, top: 25),
       //height: 320,
       width: double.infinity,
+
       padding:
       const EdgeInsets.only(
           left: 20, right: 20, bottom: 20),
@@ -43,7 +44,16 @@ class _MealsOriginalWidget extends State<MealsOriginalWidget> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
-            //Fazer o if para verificar se há atualizados
+            if(widget.meal.originalImg.isNotEmpty)...{
+              const CircleAvatar(
+                radius: 72.0,
+                backgroundColor: Colors.transparent,
+                backgroundImage: AssetImage('assets/images/image.jpg'),
+              ),
+            },
+            const SizedBox(
+              height: 15,
+            ),
             Text(
               widget.meal.originalWeekDay,
               style: const TextStyle(
@@ -146,8 +156,14 @@ class _MealsUpdatedWidget extends State<MealsUpdatedWidget> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
-            //Fazer o if para verificar se há atualizados
-            Text("${widget.meal.updatedWeekDay}",
+            if(widget.meal.updatedImg.isNotEmpty)...{
+              const CircleAvatar(
+                radius: 72.0,
+                backgroundColor: Colors.transparent,
+                backgroundImage: AssetImage('assets/images/image.jpg'),
+              ),
+            },
+            Text(widget.meal.updatedWeekDay,
               style: const TextStyle(
                   color: Colors.white,
                   fontSize: 25,

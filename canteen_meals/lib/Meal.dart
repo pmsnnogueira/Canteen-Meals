@@ -1,5 +1,5 @@
 class Meal{
-  //final String img;
+  final String originalImg;
   final String originalWeekDay;
   final String originalSoup;
   final String originalFish;
@@ -7,6 +7,7 @@ class Meal{
   final String originalVegetarian;
   final String originalDesert;
 
+  String updatedImg = '';
   String updatedWeekDay = '';
   String updatedSoup = '';
   String updatedFish = '';
@@ -16,6 +17,7 @@ class Meal{
   bool mealUpdate = false;
 
   Meal.fromJson(Map<String , dynamic> json):
+        originalImg = json['original'] ? ['img'] ?? '',
         originalWeekDay = json['original'] ? ['weekDay'] ?? '',
         originalSoup = json['original'] ? ['soup'] ?? '',
         originalFish = json['original'] ? ['fish'] ?? '',
@@ -24,6 +26,7 @@ class Meal{
         originalDesert =  json['original'] ? ['desert'] ?? '',
 
         mealUpdate = (json['update'] ? ['weekDay'] ?? '').isNotEmpty{
+        updatedImg = json['update'] ? ['img'] ?? '';
         updatedWeekDay = json['update'] ? ['weekDay'] ?? '';
         updatedSoup = json['update'] ? ['soup'] ?? '';
         updatedFish = json['update'] ? ['fish'] ?? '';
