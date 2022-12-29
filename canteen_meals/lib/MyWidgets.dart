@@ -1,12 +1,24 @@
+import 'dart:convert';
+
 import 'package:canteen_meals/Meal.dart';
 import 'package:flutter/material.dart';
+import 'dart:io' as Io;
+
 
 class MealsOriginalWidget extends StatefulWidget{
   final Meal meal;
-  MealsOriginalWidget(this.meal);
+  var decodedBytes;
+  MealsOriginalWidget(this.meal){
+    if(meal.originalImg.isNotEmpty) {
+      decodedBytes = base64Decode(meal.originalImg);
+
+    }
+  }
 
   @override
   _MealsOriginalWidget createState() => _MealsOriginalWidget();
+
+
 }
 
 class _MealsOriginalWidget extends State<MealsOriginalWidget> {
@@ -45,11 +57,11 @@ class _MealsOriginalWidget extends State<MealsOriginalWidget> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
             if(widget.meal.originalImg.isNotEmpty)...{
-              const CircleAvatar(
+              CircleAvatar(
                 radius: 72.0,
                 backgroundColor: Colors.transparent,
-                backgroundImage: AssetImage('assets/images/image.jpg'),
-              ),
+                backgroundImage:MemoryImage(widget.decodedBytes),
+                ),
             },
             const SizedBox(
               height: 15,
@@ -116,7 +128,12 @@ class _MealsOriginalWidget extends State<MealsOriginalWidget> {
 
 class MealsUpdatedWidget extends StatefulWidget{
   final Meal meal;
-  MealsUpdatedWidget(this.meal);
+  var decodedBytes;
+  MealsUpdatedWidget(this.meal){
+    if(meal.originalImg.isNotEmpty) {
+      decodedBytes = base64Decode(meal.originalImg);
+    }
+  }
 
   @override
   _MealsUpdatedWidget createState() => _MealsUpdatedWidget();
@@ -156,11 +173,11 @@ class _MealsUpdatedWidget extends State<MealsUpdatedWidget> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
-            if(widget.meal.updatedImg.isNotEmpty)...{
-              const CircleAvatar(
+            if(widget.meal.originalImg.isNotEmpty)...{
+              CircleAvatar(
                 radius: 72.0,
                 backgroundColor: Colors.transparent,
-                backgroundImage: AssetImage('assets/images/image.jpg'),
+                backgroundImage:MemoryImage(widget.decodedBytes),
               ),
             },
             Text(widget.meal.updatedWeekDay,
