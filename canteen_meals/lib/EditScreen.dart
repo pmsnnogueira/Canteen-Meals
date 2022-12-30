@@ -35,7 +35,7 @@ class _EditScreenState extends State<EditScreen> {
     });
   }
 
-  void updateMeal(){
+  void updateMeal(bool original){
     setState(() {
       List<String> inputs = [];
       inputs.add(widget.meal.originalWeekDay);
@@ -55,7 +55,7 @@ class _EditScreenState extends State<EditScreen> {
       inputs.add((updatedDesert.text.isNotEmpty) ?
         updatedDesert.text : widget.meal.originalDesert);
 
-      Meal.mealPost(inputs);
+      Meal.mealPost(inputs , original);
 
       clearInput();
     });
@@ -144,7 +144,7 @@ class _EditScreenState extends State<EditScreen> {
                       ),
                     ),
                   ),
-                  onPressed: () => null,
+                  onPressed: () => updateMeal(true),
                   child: Text(
                     AppConstant.RESET_ORIGINAL_LABEL.toUpperCase(),
                     style: const TextStyle(
@@ -167,7 +167,7 @@ class _EditScreenState extends State<EditScreen> {
                       ),
                     ),
                   ),
-                  onPressed: () => updateMeal(),
+                  onPressed: () => updateMeal(false),
                   child: Text(
                     AppConstant.UPDATED_MEAL_LABEL.toUpperCase(),
                     style: const TextStyle(

@@ -42,17 +42,25 @@ class Meal{
         updatedDesert =  json[AppConstant.UPDATE_JSON] ? [AppConstant.DESERT_JSON] ?? '';
       }
 
-    static Future<void> mealPost(List<String> input) async {
+    static Future<void> mealPost(List<String> input , bool original) async {
 
       String url = AppConstant.MEALS_URL;
-      Map map = {
-        'weekDay': input[0],
-        'soup': input[1],
-        'fish': input[3],
-        'meat': input[2],
-        'vegetarian': input[4],
-        'desert': input[5],
-      };
+      Map map;
+
+      if(original == true) {
+        
+        map = {'weekDay':null};
+
+      }else {
+        map = {
+          'weekDay': input[0],
+          'soup': input[1],
+          'fish': input[3],
+          'meat': input[2],
+          'vegetarian': input[4],
+          'desert': input[5],
+        };
+      }
       debugPrint(await apiRequest(url, map));
 
     }
@@ -61,6 +69,7 @@ class Meal{
 
 
       HttpClient httpClient = HttpClient();
+      debugPrint(jsonMap[0]);
       HttpClientRequest request = await httpClient.postUrl(Uri.parse(url));
       request.headers.contentType = ContentType("application", "json", charset: "UTF-8");
       request.add(utf8.encode(json.encode(jsonMap)));
