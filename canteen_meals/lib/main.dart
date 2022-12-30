@@ -27,7 +27,7 @@ class MyApp extends StatelessWidget {
       ),
       initialRoute: MyHomePage.routeName,
       routes:{
-        MyHomePage.routeName : (context) => MyHomePage(title: 'Canteen Meals'),
+        MyHomePage.routeName : (context) => const MyHomePage(title: 'Canteen Meals'),
         //EditScreen.routName : (context) => EditScreen(),
       },
       debugShowCheckedModeBanner: false,
@@ -52,6 +52,7 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
 
+  //static const String _mealsUrl = "http://0.0.0.0:8080/menu";
   static const String _mealsUrl = "http://amov.servehttp.com:8080/menu";
 
   static const Map<int, String> weekdayName = {1: "Monday", 2: "Tuesday", 3: "Wednesday", 4: "Thursday", 5: "Friday", 6: "Saturday", 7: "Sunday"};
@@ -70,6 +71,7 @@ class _MyHomePageState extends State<MyHomePage> {
     try {
       setState(() => _fetchingData = true);
       http.Response response = await http.get(Uri.parse(_mealsUrl));
+      //debugPrint(${response.statusCode.toString()}");
       if (response.statusCode == HttpStatus.ok) { // import do dart.io, não do html
         final mealsData = json.decode(utf8.decode(response.body.codeUnits));
         final meals = <Meal>[];
@@ -151,10 +153,15 @@ class _MyHomePageState extends State<MyHomePage> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               FloatingActionButton.extended(
-                  label: const Text('<'),
+                  label: const Text(
+                    '<',
+                    style: TextStyle(
+                      fontSize: 25,
+                    ),
+                  ),
                   onPressed: () async {
                     _decrementWeek();
-                    _fetchMeals();
+                    //_fetchMeals();
                     //debugPrint('Card -> $_meals');
                     //debugPrint('Week -> ${date.toString()}');
                     //Map<String, dynamic> mondayMeal = await getMealForDay(_mealsUrl, 'MONDAY');
@@ -168,10 +175,14 @@ class _MyHomePageState extends State<MyHomePage> {
                 width: 20,
               ),
               FloatingActionButton.extended(
-                  label: const Text('>'),
+                  label: const Text(
+                      '>',
+                    style: TextStyle(
+                      fontSize: 25,
+                    ),),
                   onPressed: () {
                     _incrementWeek();
-                    _fetchMeals();
+                    //_fetchMeals();
                   }
               ),
             ],

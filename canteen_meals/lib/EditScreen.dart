@@ -9,8 +9,6 @@ class EditScreen extends StatefulWidget {
 
   const EditScreen(this.meal , {Key? key}) : super(key : key);
 
-
-
   static const String routName = '/EditScreen';
 
   @override
@@ -25,27 +23,39 @@ class _EditScreenState extends State<EditScreen> {
   final updatedFish = TextEditingController();
   final updatedVegetarian = TextEditingController();
   final updatedDesert = TextEditingController();
-  bool isValid = true;
+  //bool isValid = true;
 
-  void updateMeal(){
-
+  void clearInput(){
     setState(() {
-
-      List<String> inputs = [];
-      inputs.add(updatedWeekDay.text);
-      inputs.add(updatedMeat.text);
-      inputs.add(updatedFish.text);
-      inputs.add(updatedVegetarian.text);
-      inputs.add(updatedDesert.text);
-
-      Meal.mealPost(inputs);
-      //updatedSoup.text = "";
+      updatedWeekDay.text = "";
+      updatedSoup.text = "";
+      updatedMeat.text = "";
+      updatedFish.text = "";
+      updatedVegetarian.text = "";
+      updatedDesert.text = "";
     });
   }
 
-  void setValidator(valid){
+  void updateMeal(){
     setState(() {
-      isValid = valid;
+      List<String> inputs = [];
+      inputs.add( (updatedWeekDay.text.isNotEmpty) ?
+        updatedWeekDay.text : widget.meal.originalWeekDay);
+
+      inputs.add((updatedMeat.text.isNotEmpty) ?
+        updatedMeat.text : widget.meal.originalMeat);
+
+      inputs.add((updatedFish.text.isNotEmpty) ?
+        updatedFish.text : widget.meal.originalFish);
+
+      inputs.add((updatedVegetarian.text.isNotEmpty) ?
+        updatedVegetarian.text : widget.meal.originalVegetarian);
+
+      inputs.add((updatedDesert.text.isNotEmpty) ?
+        updatedDesert.text : widget.meal.originalDesert);
+      Meal.mealPost(inputs);
+
+      clearInput();
     });
   }
 
@@ -89,7 +99,7 @@ class _EditScreenState extends State<EditScreen> {
               },
               decoration: InputDecoration(
                 hintText: "Weekday",
-                errorText: isValid ? null : "This item cant be empty",
+                //errorText: isValid ? null : "This item cant be empty",
               ),
             ),
             TextField(
@@ -102,7 +112,7 @@ class _EditScreenState extends State<EditScreen> {
               },
               decoration: InputDecoration(
                 hintText: "Soup",
-                errorText: isValid ? null : "This item cant be empty",
+                //errorText: isValid ? null : "This item cant be empty",
               ),
               controller: updatedSoup,
             ),
