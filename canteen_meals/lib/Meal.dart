@@ -3,6 +3,8 @@ import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
 
+import 'AppConstant.dart';
+
 class Meal{
   final String originalImg;
   final String originalWeekDay;
@@ -22,22 +24,22 @@ class Meal{
   bool mealUpdate = false;
 
   Meal.fromJson(Map<String , dynamic> json):
-        originalImg = json['original'] ? ['img'] ?? '',
-        originalWeekDay = json['original'] ? ['weekDay'] ?? '',
-        originalSoup = json['original'] ? ['soup'] ?? '',
-        originalFish = json['original'] ? ['fish'] ?? '',
-        originalMeat = json['original'] ? ['meat'] ?? '',
-        originalVegetarian = json['original'] ? ['vegetarian'] ?? '',
-        originalDesert =  json['original'] ? ['desert'] ?? '',
+        originalImg = json[AppConstant.ORIGINAL_JSON] ? [AppConstant.IMG_JSON] ?? '',
+        originalWeekDay = json[AppConstant.ORIGINAL_JSON] ? [AppConstant.WEEKDAY_JSON] ?? '',
+        originalSoup = json[AppConstant.ORIGINAL_JSON] ? [AppConstant.SOUP_JSON] ?? '',
+        originalFish = json[AppConstant.ORIGINAL_JSON] ? [AppConstant.FISH_JSON] ?? '',
+        originalMeat = json[AppConstant.ORIGINAL_JSON] ? [AppConstant.MEAT_JSON] ?? '',
+        originalVegetarian = json[AppConstant.ORIGINAL_JSON] ? [AppConstant.VEGETARIAN_JSON] ?? '',
+        originalDesert =  json[AppConstant.ORIGINAL_JSON] ? [AppConstant.DESERT_LABEL] ?? '',
 
-        mealUpdate = (json['update'] ? ['weekDay'] ?? '').isNotEmpty{
-        updatedImg = json['update'] ? ['img'] ?? '';
-        updatedWeekDay = json['update'] ? ['weekDay'] ?? '';
-        updatedSoup = json['update'] ? ['soup'] ?? '';
-        updatedFish = json['update'] ? ['fish'] ?? '';
-        updatedMeat = json['update'] ? ['meat'] ?? '';
-        updatedVegetarian = json['update'] ? ['vegetarian'] ?? '';
-        updatedDesert =  json['update'] ? ['desert'] ?? '';
+        mealUpdate = (json[AppConstant.UPDATE_JSON] ? [AppConstant.WEEKDAY_JSON] ?? '').isNotEmpty{
+        updatedImg = json[AppConstant.UPDATE_JSON] ? [AppConstant.IMG_JSON] ?? '';
+        updatedWeekDay = json[AppConstant.UPDATE_JSON] ? [AppConstant.WEEKDAY_JSON] ?? '';
+        updatedSoup = json[AppConstant.UPDATE_JSON] ? [AppConstant.SOUP_JSON] ?? '';
+        updatedFish = json[AppConstant.UPDATE_JSON] ? [AppConstant.FISH_JSON] ?? '';
+        updatedMeat = json[AppConstant.UPDATE_JSON] ? [AppConstant.MEAT_JSON] ?? '';
+        updatedVegetarian = json[AppConstant.UPDATE_JSON] ? [AppConstant.VEGETARIAN_JSON] ?? '';
+        updatedDesert =  json[AppConstant.UPDATE_JSON] ? [AppConstant.DESERT_JSON] ?? '';
       }
 
     static Future<void> mealPost(List<String> input) async {

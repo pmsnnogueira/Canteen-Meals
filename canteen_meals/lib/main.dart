@@ -8,6 +8,7 @@ import 'package:intl/intl.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 
 import 'EditScreen.dart';
+import 'AppConstant.dart';
 
 
 void main() {
@@ -21,13 +22,13 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Canteen Meals',
+      title: AppConstant.APP_NAME,
       theme: ThemeData(
         primarySwatch: Colors.container,
       ),
       initialRoute: MyHomePage.routeName,
       routes:{
-        MyHomePage.routeName : (context) => const MyHomePage(title: 'Canteen Meals'),
+        MyHomePage.routeName : (context) => const MyHomePage(title: AppConstant.APP_NAME),
         //EditScreen.routName : (context) => EditScreen(),
       },
       debugShowCheckedModeBanner: false,
@@ -39,7 +40,7 @@ class MyHomePage extends StatefulWidget {
   const MyHomePage({super.key, required this.title});
   final String title;
 
-  static const String routeName = '/';
+  static const String routeName = AppConstant.ROUTENAME_HOMEPAGE;
 
   @override
   State<MyHomePage> createState() => _MyHomePageState();
@@ -51,17 +52,6 @@ class MyHomePage extends StatefulWidget {
 
 
 class _MyHomePageState extends State<MyHomePage> {
-
-  ///This is used to connect the android emulator with the pc localhost
-  static const String _mealsUrl = "http://10.0.2.2:8080/menu";
-
-  ///Link for the professor public server with the json file
-  ///Professor Github link: https://github.com/ansisec
-  // static const String _mealsUrl = "http://amov.servehttp.com:8080/menu";
-
-  static const Map<int, String> weekdayName = {1: "Monday", 2: "Tuesday", 3: "Wednesday", 4: "Thursday", 5: "Friday", 6: "Saturday", 7: "Sunday"};
-  static const Map<String, int> weekdayNumber = {"monday": 1, "tuesday": 2, "wednesday": 3, "thursday" : 4 , "friday" : 5, "saturday": 6, "sunday" : 7};
-
   DateTime today = DateTime.now();    //Proprio dia que nunca é mudado
   DateTime date = DateTime.now();     //date alteravel
   late DateTime actualMonday;
@@ -74,7 +64,7 @@ class _MyHomePageState extends State<MyHomePage> {
   Future<void> _fetchMeals() async {
     try {
       setState(() => _fetchingData = true);
-      http.Response response = await http.get(Uri.parse(_mealsUrl));
+      http.Response response = await http.get(Uri.parse(AppConstant.MEALS_URL));
       //debugPrint(${response.statusCode.toString()}");
       if (response.statusCode == HttpStatus.ok) { // import do dart.io, não do html
         final mealsData = json.decode(utf8.decode(response.body.codeUnits));
@@ -96,8 +86,8 @@ class _MyHomePageState extends State<MyHomePage> {
   void initState() {
     super.initState();
     // Get the first day of the week (Monday)
-    actualMonday = today.weekday == 7 ? today.add(Duration(days: 1)) : today.subtract(Duration(days: today.weekday - 1));
-    dateText = DateFormat('dd/MM/yyyy').format(today);
+    actualMonday = today.weekday == 7 ? today.add(const Duration(days: 1)) : today.subtract(Duration(days: today.weekday - 1));
+    dateText = DateFormat(AppConstant.DATE_FORMAT).format(today);
 
     _fetchMeals();
   }
@@ -108,18 +98,18 @@ class _MyHomePageState extends State<MyHomePage> {
       if (date.isAfter(today)) { //Passa para a proxima segunda Feira
         //Decrementar uma semana ao dateTime que posso alterar
         if (date == today) {
-          date = actualMonday.subtract(Duration(days: 7));
-          actualMonday = actualMonday.subtract(Duration(days: 7));
+          date = actualMonday.subtract(const Duration(days: 7));
+          actualMonday = actualMonday.subtract(const Duration(days: 7));
         } else if (date != today) {
-          date = actualMonday.subtract(Duration(days: 7));
-          actualMonday = actualMonday.subtract(Duration(days: 7));
+          date = actualMonday.subtract(const Duration(days: 7));
+          actualMonday = actualMonday.subtract(const Duration(days: 7));
         }
       }
       if(date.isBefore(today)){
         date = today;
       }
 
-      dateText = DateFormat('dd/MM/yyyy').format(date);
+      dateText = DateFormat(AppConstant.DATE_FORMAT).format(date);
     });
   }
 
@@ -129,14 +119,14 @@ class _MyHomePageState extends State<MyHomePage> {
       if (date.isAfter(today) || date == today) { //Passa para a proxima segunda Feira
         //Incrementar uma semana ao dateTime que posso alterar
         if (date == today) {
-          date = actualMonday.add(Duration(days: 7));
-          actualMonday = actualMonday.add(Duration(days: 7));
+          date = actualMonday.add(const Duration(days: 7));
+          actualMonday = actualMonday.add(const Duration(days: 7));
         } else if (date != today) {
-          date = actualMonday.add(Duration(days: 7));
-          actualMonday = actualMonday.add(Duration(days: 7));
+          date = actualMonday.add(const Duration(days: 7));
+          actualMonday = actualMonday.add(const Duration(days: 7));
         }
       }
-      dateText = DateFormat('dd/MM/yyyy').format(date);
+      dateText = DateFormat(AppConstant.DATE_FORMAT).format(date);
     });
   }
 
@@ -145,7 +135,7 @@ class _MyHomePageState extends State<MyHomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.title),
+        title: const Text(AppConstant.APP_NAME),
       ),
       body: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -157,19 +147,20 @@ class _MyHomePageState extends State<MyHomePage> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               FloatingActionButton.extended(
-                  label: const Text(
-                    '<',
-                    style: TextStyle(
-                      fontSize: 25,
-                    ),
+                heroTag: null,
+                label: const Text(
+                  AppConstant.PREVIOUS_WEEK,
+                  style: TextStyle(
+                    fontSize: 25,
                   ),
-                  onPressed: () async {
-                    _decrementWeek();
-                    //_fetchMeals();
-                    //debugPrint('Card -> $_meals');
-                    //debugPrint('Week -> ${date.toString()}');
-                    //Map<String, dynamic> mondayMeal = await getMealForDay(_mealsUrl, 'MONDAY');
-                  },
+                ),
+                onPressed: () async {
+                  _decrementWeek();
+                  //_fetchMeals();
+                  //debugPrint('Card -> $_meals');
+                  //debugPrint('Week -> ${date.toString()}');
+                  //Map<String, dynamic> mondayMeal = await getMealForDay(_mealsUrl, 'MONDAY');
+                },
               ),
               const SizedBox(
                 width: 20,
@@ -179,15 +170,16 @@ class _MyHomePageState extends State<MyHomePage> {
                 width: 20,
               ),
               FloatingActionButton.extended(
-                  label: const Text(
-                      '>',
-                    style: TextStyle(
-                      fontSize: 25,
-                    ),),
-                  onPressed: () {
-                    _incrementWeek();
-                    //_fetchMeals();
-                  }
+                heroTag: null,
+                label: const Text(
+                    AppConstant.NEXT_WEEK,
+                  style: TextStyle(
+                    fontSize: 25,
+                  ),),
+                onPressed: () {
+                  _incrementWeek();
+                  //_fetchMeals();
+                },
               ),
             ],
           ),
@@ -199,7 +191,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 itemBuilder: (context,index){
                   var aux = DateTime.now();
                   if(aux.day == date.day && aux.month == date.month && aux.year == date.year &&
-                    (weekdayNumber[_meals![index].originalWeekDay.toLowerCase()] ?? 0) < today.weekday){
+                    (AppConstant.WEEKDAYNUMBER[_meals![index].originalWeekDay.toLowerCase()] ?? 0) < today.weekday){
                     return const Offstage();
                   }
                   if(!_meals![index].mealUpdate){
@@ -210,7 +202,7 @@ class _MyHomePageState extends State<MyHomePage> {
                           SlidableAction(
                             backgroundColor: Colors.green,
                             icon: Icons.edit,
-                            label: 'Edit',
+                            label: AppConstant.EDIT_LABEL,
                             onPressed: (context) => Navigator.push(
                                 context,
                                 MaterialPageRoute(
@@ -230,7 +222,7 @@ class _MyHomePageState extends State<MyHomePage> {
                           SlidableAction(
                             backgroundColor: Colors.green,
                             icon: Icons.edit,
-                            label: 'Edit',
+                            label: AppConstant.EDIT_LABEL,
                             onPressed: (context) => _incrementWeek(),
                           )
                         ],

@@ -1,15 +1,16 @@
+import 'package:canteen_meals/AppConstant.dart';
 import 'package:canteen_meals/MyWidgets.dart';
 import 'package:flutter/material.dart';
 
 import 'Meal.dart';
+import 'AppConstant.dart';
 
 class EditScreen extends StatefulWidget {
-  final String title = "Edit Meal";
   final Meal meal;
 
   const EditScreen(this.meal , {Key? key}) : super(key : key);
 
-  static const String routName = '/EditScreen';
+  static const String routName = AppConstant.ROUTENAME_EDIT_SCREEN;
 
   @override
   State<EditScreen> createState() => _EditScreenState();
@@ -63,7 +64,7 @@ class _EditScreenState extends State<EditScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar:AppBar(
-        title: Text(widget.title),
+        title: const Text(AppConstant.EDIT_PAGE_NAME),
       ),
       body:SingleChildScrollView(
         child: Column(
@@ -73,7 +74,7 @@ class _EditScreenState extends State<EditScreen> {
               height: 40,
             ),
             const Text(
-              "Original Meal",
+              AppConstant.ORIGINAL_MEAL_LABEL,
               style: TextStyle(
                 fontSize: 20,
                 fontWeight: FontWeight.bold,
@@ -81,7 +82,7 @@ class _EditScreenState extends State<EditScreen> {
             ),
             MealsOriginalWidget(widget.meal),
             const Text(
-              "Updated Meal",
+              AppConstant.UPDATED_MEAL_LABEL,
               style: TextStyle(
                 fontSize: 20,
                 fontWeight: FontWeight.bold,
@@ -90,53 +91,53 @@ class _EditScreenState extends State<EditScreen> {
             TextField(
               maxLines: 1,
               controller: updatedWeekDay,
-              onChanged: (inputValue){
+              //onChanged: (inputValue){
                 // if(inputValue.isEmpty){
                 //   setValidator(true);
                 // }else{
                 //   setValidator(false);
                 // }
-              },
-              decoration: InputDecoration(
-                hintText: "Weekday",
+             // },
+              decoration: const InputDecoration(
+                hintText: AppConstant.WEEKDAY_LABEL,
                 //errorText: isValid ? null : "This item cant be empty",
               ),
             ),
             TextField(
-              onChanged: (inputValue){
+              //onChanged: (inputValue){
                 // if(inputValue.isEmpty){
                 //   setValidator(true);
                 // }else {
                 //   setValidator(false);
                 // }
-              },
-              decoration: InputDecoration(
-                hintText: "Soup",
+              //},
+              decoration: const InputDecoration(
+                hintText: AppConstant.SOUP_LABEL,
                 //errorText: isValid ? null : "This item cant be empty",
               ),
               controller: updatedSoup,
             ),
             TextField(
               decoration: const InputDecoration(
-                hintText: "Meat",
+                hintText: AppConstant.MEAT_LABEL,
               ),
               controller: updatedMeat,
             ),
             TextField(
               decoration: const InputDecoration(
-                hintText: "Fish",
+                hintText: AppConstant.FISH_LABEL,
               ),
               controller: updatedFish,
             ),
             TextField(
               decoration: const InputDecoration(
-                hintText: "Vegetarian",
+                hintText: AppConstant.VEGETARIAN_LABEL,
               ),
               controller: updatedVegetarian,
             ),
             TextField(
               decoration: const InputDecoration(
-                hintText: "Desert",
+                hintText: AppConstant.DESERT_LABEL,
               ),
               controller: updatedDesert,
             ),
@@ -153,13 +154,13 @@ class _EditScreenState extends State<EditScreen> {
                     shape: MaterialStateProperty.all<RoundedRectangleBorder>(
                       RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(18.0),
-                          side: BorderSide(color: Colors.red)
+                          side: const BorderSide(color: Colors.red)
                       ),
                     ),
                   ),
                   onPressed: () => null,
                   child: Text(
-                    "Reset to Original".toUpperCase(),
+                    AppConstant.RESET_ORIGINAL_LABEL.toUpperCase(),
                     style: const TextStyle(
                         fontSize: 14,
                         fontWeight: FontWeight.bold
@@ -176,13 +177,13 @@ class _EditScreenState extends State<EditScreen> {
                     shape: MaterialStateProperty.all<RoundedRectangleBorder>(
                       RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(18.0),
-                          side: BorderSide(color: Colors.green)
+                          side: const BorderSide(color: Colors.green)
                       ),
                     ),
                   ),
                   onPressed: () => updateMeal(),
                   child: Text(
-                    "Update Meal".toUpperCase(),
+                    AppConstant.UPDATED_MEAL_LABEL.toUpperCase(),
                     style: const TextStyle(
                         fontSize: 14,
                         fontWeight: FontWeight.bold

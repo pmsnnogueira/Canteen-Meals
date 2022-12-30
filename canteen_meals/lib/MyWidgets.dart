@@ -2,6 +2,8 @@ import 'dart:convert';
 import 'package:canteen_meals/Meal.dart';
 import 'package:flutter/material.dart';
 
+import 'AppConstant.dart';
+
 
 class MealsOriginalWidget extends StatefulWidget{
   final Meal meal;
@@ -9,10 +11,8 @@ class MealsOriginalWidget extends StatefulWidget{
   MealsOriginalWidget(this.meal){
     if(meal.originalImg.isNotEmpty) {
       decodedBytes = base64Decode(meal.originalImg);
-
     }
   }
-
   @override
   _MealsOriginalWidget createState() => _MealsOriginalWidget();
 }
@@ -71,7 +71,7 @@ class _MealsOriginalWidget extends State<MealsOriginalWidget> {
             const SizedBox(
               height: 15,
             ),
-            Text("Soup: ${widget.meal.originalSoup}",
+            Text("${AppConstant.SOUP_LABEL}: ${widget.meal.originalSoup}",
               style: const TextStyle(
                 color: Colors.white,
                 fontSize: 19,
@@ -80,7 +80,7 @@ class _MealsOriginalWidget extends State<MealsOriginalWidget> {
             const SizedBox(
               height: 10,
             ),
-            Text("Meat: ${widget.meal.originalMeat}",
+            Text("${AppConstant.MEAT_LABEL}: ${widget.meal.originalMeat}",
               style: const TextStyle(
                 color: Colors.white,
                 fontSize: 19,
@@ -90,7 +90,7 @@ class _MealsOriginalWidget extends State<MealsOriginalWidget> {
               height: 10,
             ),
             Text(
-              "Fish: ${widget.meal.originalFish}",
+              "${AppConstant.FISH_LABEL}: ${widget.meal.originalFish}",
               style: const TextStyle(
                   color: Colors.white,
                   fontSize: 19),
@@ -98,7 +98,7 @@ class _MealsOriginalWidget extends State<MealsOriginalWidget> {
             const SizedBox(
               height: 10,
             ),
-            Text("Vegetarian: ${widget.meal.originalVegetarian}",
+            Text("${AppConstant.VEGETARIAN_LABEL}: ${widget.meal.originalVegetarian}",
               style: const TextStyle(
                 color: Colors.white,
                 fontSize: 19,
@@ -107,7 +107,7 @@ class _MealsOriginalWidget extends State<MealsOriginalWidget> {
             const SizedBox(
               height: 10,
             ),
-            Text("Desert: ${widget.meal.originalDesert}",
+            Text("${AppConstant.DESERT_LABEL}: ${widget.meal.originalDesert}",
               style: const TextStyle(
                 color: Colors.white,
                 fontSize: 19,
@@ -184,7 +184,7 @@ class _MealsUpdatedWidget extends State<MealsUpdatedWidget> {
             const SizedBox(
               height: 2,
             ),
-            const Text("Updated",
+            const Text("${AppConstant.UPDATED_LABEL}",
               style: TextStyle(
                   color: Colors.white,
                   fontSize: 15),
@@ -192,7 +192,7 @@ class _MealsUpdatedWidget extends State<MealsUpdatedWidget> {
             const SizedBox(
               height: 15,
             ),
-            Text("Soup: ${widget.meal.updatedSoup}",
+            Text("${AppConstant.SOUP_LABEL}: ${widget.meal.updatedSoup}",
               style: const TextStyle(
                 color: Colors.white,
                 fontSize: 19,
@@ -201,7 +201,7 @@ class _MealsUpdatedWidget extends State<MealsUpdatedWidget> {
             const SizedBox(
               height: 10,
             ),
-            Text("Meat: ${widget.meal.updatedMeat}",
+            Text("${AppConstant.MEAT_LABEL}: ${widget.meal.updatedMeat}",
               style: const TextStyle(
                 color: Colors.white,
                 fontSize: 19,
@@ -211,7 +211,7 @@ class _MealsUpdatedWidget extends State<MealsUpdatedWidget> {
               height: 10,
             ),
             Text(
-              "Fish: ${widget.meal.updatedFish}",
+              "${AppConstant.FISH_LABEL}: ${widget.meal.updatedFish}",
               style: const TextStyle(
                   color: Colors.white,
                   fontSize: 19),
@@ -219,7 +219,7 @@ class _MealsUpdatedWidget extends State<MealsUpdatedWidget> {
             const SizedBox(
               height: 10,
             ),
-            Text("Vegetarian: ${widget.meal.updatedVegetarian}",
+            Text("${AppConstant.VEGETARIAN_LABEL}: ${widget.meal.updatedVegetarian}",
               style: const TextStyle(
                 color: Colors.white,
                 fontSize: 19,
@@ -228,7 +228,7 @@ class _MealsUpdatedWidget extends State<MealsUpdatedWidget> {
             const SizedBox(
               height: 10,
             ),
-            Text("Desert: ${widget.meal.updatedDesert}",
+            Text("${AppConstant.DESERT_LABEL}: ${widget.meal.updatedDesert}",
               style: const TextStyle(
                 color: Colors.white,
                 fontSize: 19,
