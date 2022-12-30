@@ -30,7 +30,7 @@ class Meal{
         originalFish = json[AppConstant.ORIGINAL_JSON] ? [AppConstant.FISH_JSON] ?? '',
         originalMeat = json[AppConstant.ORIGINAL_JSON] ? [AppConstant.MEAT_JSON] ?? '',
         originalVegetarian = json[AppConstant.ORIGINAL_JSON] ? [AppConstant.VEGETARIAN_JSON] ?? '',
-        originalDesert =  json[AppConstant.ORIGINAL_JSON] ? [AppConstant.DESERT_LABEL] ?? '',
+        originalDesert =  json[AppConstant.ORIGINAL_JSON] ? [AppConstant.DESERT_JSON] ?? '',
 
         mealUpdate = (json[AppConstant.UPDATE_JSON] ? [AppConstant.WEEKDAY_JSON] ?? '').isNotEmpty{
         updatedImg = json[AppConstant.UPDATE_JSON] ? [AppConstant.IMG_JSON] ?? '';
@@ -44,9 +44,9 @@ class Meal{
 
     static Future<void> mealPost(List<String> input) async {
 
-      String url = "...";
+      String url = AppConstant.MEALS_URL;
       Map map = {
-        input[0] : {'updated' : {
+        input[0] : {'update' : {
           'weekDay' : input[0],
           'soup' : input[1],
           'fish' : input[3],
@@ -63,11 +63,11 @@ class Meal{
 
       HttpClient httpClient = new HttpClient();
       HttpClientRequest request = await httpClient.postUrl(Uri.parse(url));
-      request.headers.set('content-type', 'application/json');
+      request.headers.contentType = ContentType("application", "json", charset: "utf-8");
       request.add(utf8.encode(json.encode(jsonMap)));
       HttpClientResponse response = await request.close();
       // Verificar o status code
-      debugPrint(response.toString());
+      debugPrint(response.statusCode.toString());
       String reply = await response.transform(utf8.decoder).join();
       httpClient.close();
       return reply;

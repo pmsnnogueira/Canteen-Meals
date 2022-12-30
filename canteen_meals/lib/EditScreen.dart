@@ -43,6 +43,9 @@ class _EditScreenState extends State<EditScreen> {
       inputs.add( (updatedWeekDay.text.isNotEmpty) ?
         updatedWeekDay.text : widget.meal.originalWeekDay);
 
+      inputs.add((updatedSoup.text.isNotEmpty) ?
+        updatedSoup.text : widget.meal.originalSoup);
+
       inputs.add((updatedMeat.text.isNotEmpty) ?
         updatedMeat.text : widget.meal.originalMeat);
 
@@ -54,6 +57,7 @@ class _EditScreenState extends State<EditScreen> {
 
       inputs.add((updatedDesert.text.isNotEmpty) ?
         updatedDesert.text : widget.meal.originalDesert);
+
       Meal.mealPost(inputs);
 
       clearInput();
