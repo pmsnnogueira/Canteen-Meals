@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import 'EditScreen.dart';
 import 'AppConstant.dart';
@@ -82,6 +83,40 @@ class _MyHomePageState extends State<MyHomePage> {
     }
   }
 
+  saveMeals() async{
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    List<String> mealStrings = [];
+    String jsonString = '{"original":{"weekDay":"MONDAY","soup":"abobora"},"update":null}';       //Ter atencao aos " "
+    //mealStrings.add(jsonString);
+    for(Meal meal in _meals!){
+      //final mealJson = jsonEncode(meal.toJson());
+       mealStrings.add(meal.toJson().toString());
+      //final mealUtf8 = utf8.encode(mealJson);
+    }
+    debugPrint(mealStrings[0]);
+    //final mealsData = json.encode(jsonString);
+
+    prefs.setStringList('meals', mealStrings);
+  }
+
+  Future<void> loadMeals() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    List<String>? mealStrings = prefs.getStringList('meals');
+    //List<Meal> meals = [];
+
+    if(mealStrings == null){
+      return;
+    }
+    Map<String, dynamic> json;
+    debugPrint(mealStrings![0]);
+    for(String mealString in mealStrings!){
+      json = jsonDecode(utf8.decode(mealString.codeUnits));
+      final meal = Meal.fromJson(json);
+      _meals?.add(meal);
+    }
+    return;
+  }
+
   @override
   void initState() {
     super.initState();
@@ -89,7 +124,17 @@ class _MyHomePageState extends State<MyHomePage> {
     actualMonday = today.weekday == 7 ? today.add(const Duration(days: 1)) : today.subtract(Duration(days: today.weekday - 1));
     dateText = DateFormat(AppConstant.DATE_FORMAT).format(today);
 
-    _fetchMeals();
+
+    //_meals = getSavedMeals();
+   
+    //_fetchMeals();
+    //saveMeals();
+
+    //loadMeals();
+    if(_meals!.isEmpty){
+      _fetchMeals();
+      saveMeals();
+    }
   }
 
   ///_decrementWeek functions is used to decrement the week
@@ -223,7 +268,12 @@ class _MyHomePageState extends State<MyHomePage> {
                             backgroundColor: Colors.green,
                             icon: Icons.edit,
                             label: AppConstant.EDIT_LABEL,
-                            onPressed: (context) => _incrementWeek(),
+                            onPressed: (context) => Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => EditScreen(_meals![index]),
+                              ),
+                            ),
                           )
                         ],
                       ),

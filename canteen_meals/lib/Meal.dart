@@ -8,7 +8,7 @@ import 'AppConstant.dart';
 class Meal{
   final String originalImg;
   final String originalWeekDay;
-  final String originalSoup;
+  late String originalSoup;
   final String originalFish;
   final String originalMeat;
   final String originalVegetarian;
@@ -46,14 +46,12 @@ class Meal{
 
       String url = AppConstant.MEALS_URL;
       Map map = {
-        input[0] : {'update' : {
-          'weekDay' : input[0],
-          'soup' : input[1],
-          'fish' : input[3],
-          'meat' : input[2],
-          'vegetarian' : input[4],
-          'desert' : input[5],
-        }}
+        'weekDay': input[0],
+        'soup': input[1],
+        'fish': input[3],
+        'meat': input[2],
+        'vegetarian': input[4],
+        'desert': input[5],
       };
       debugPrint(await apiRequest(url, map));
 
@@ -61,9 +59,10 @@ class Meal{
 
     static Future<String> apiRequest(String url , Map jsonMap) async{
 
-      HttpClient httpClient = new HttpClient();
+
+      HttpClient httpClient = HttpClient();
       HttpClientRequest request = await httpClient.postUrl(Uri.parse(url));
-      request.headers.contentType = ContentType("application", "json", charset: "utf-8");
+      request.headers.contentType = ContentType("application", "json", charset: "UTF-8");
       request.add(utf8.encode(json.encode(jsonMap)));
       HttpClientResponse response = await request.close();
       // Verificar o status code
@@ -72,4 +71,23 @@ class Meal{
       httpClient.close();
       return reply;
     }
+
+    Map<String , dynamic> toJson() => {
+        '"original"':{
+          '"weekDay"':'"$originalWeekDay"',
+          '"soup"':'"$originalWeekDay"',
+          '"meat"':'"$originalWeekDay"',
+          '"fish"':'"$originalWeekDay"',
+          '"vegetarian"':'"$originalWeekDay"',
+          '"desert"':'"$originalWeekDay"',
+        },
+        '"update"':(updatedWeekDay.isEmpty)?null:{   //Mudar isto
+          '"weekDay"':'"$originalWeekDay"',
+          '"soup"' : '"$originalWeekDay"',
+          '"meat"' : '"$originalWeekDay"',
+          '"fish"' : '"$originalWeekDay"',
+          '"vegetarian"':'"$originalWeekDay"',
+          '"desert"' : '"$originalWeekDay"'
+        },
+    };
 }

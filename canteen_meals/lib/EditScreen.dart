@@ -18,7 +18,6 @@ class EditScreen extends StatefulWidget {
 class _EditScreenState extends State<EditScreen> {
 
   //final updatedImg = TextEditingController();
-  final updatedWeekDay = TextEditingController();
   final updatedSoup = TextEditingController();
   final updatedMeat = TextEditingController();
   final updatedFish = TextEditingController();
@@ -28,7 +27,6 @@ class _EditScreenState extends State<EditScreen> {
 
   void clearInput(){
     setState(() {
-      updatedWeekDay.text = "";
       updatedSoup.text = "";
       updatedMeat.text = "";
       updatedFish.text = "";
@@ -40,8 +38,7 @@ class _EditScreenState extends State<EditScreen> {
   void updateMeal(){
     setState(() {
       List<String> inputs = [];
-      inputs.add( (updatedWeekDay.text.isNotEmpty) ?
-        updatedWeekDay.text : widget.meal.originalWeekDay);
+      inputs.add(widget.meal.originalWeekDay);
 
       inputs.add((updatedSoup.text.isNotEmpty) ?
         updatedSoup.text : widget.meal.originalSoup);
@@ -90,21 +87,6 @@ class _EditScreenState extends State<EditScreen> {
               style: TextStyle(
                 fontSize: 20,
                 fontWeight: FontWeight.bold,
-              ),
-            ),
-            TextField(
-              maxLines: 1,
-              controller: updatedWeekDay,
-              //onChanged: (inputValue){
-                // if(inputValue.isEmpty){
-                //   setValidator(true);
-                // }else{
-                //   setValidator(false);
-                // }
-             // },
-              decoration: const InputDecoration(
-                hintText: AppConstant.WEEKDAY_LABEL,
-                //errorText: isValid ? null : "This item cant be empty",
               ),
             ),
             TextField(
