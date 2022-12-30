@@ -52,8 +52,12 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
 
-  //static const String _mealsUrl = "http://0.0.0.0:8080/menu";
-  static const String _mealsUrl = "http://amov.servehttp.com:8080/menu";
+  ///This is used to connect the android emulator with the pc localhost
+  static const String _mealsUrl = "http://10.0.2.2:8080/menu";
+
+  ///Link for the professor public server with the json file
+  ///Professor Github link: https://github.com/ansisec
+  // static const String _mealsUrl = "http://amov.servehttp.com:8080/menu";
 
   static const Map<int, String> weekdayName = {1: "Monday", 2: "Tuesday", 3: "Wednesday", 4: "Thursday", 5: "Friday", 6: "Saturday", 7: "Sunday"};
   static const Map<String, int> weekdayNumber = {"monday": 1, "tuesday": 2, "wednesday": 3, "thursday" : 4 , "friday" : 5, "saturday": 6, "sunday" : 7};
