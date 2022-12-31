@@ -48,7 +48,7 @@ class Meal{
       Map map;
 
       if(original == true) {
-        
+
         map = {'weekDay':null};
 
       }else {

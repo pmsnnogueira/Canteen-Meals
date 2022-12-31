@@ -39,6 +39,8 @@ dependencies:
   http: any
   intl: ^0.17.0  #Para a DateFormat
   shared_preferences: ^2.0.15   #Save information
+  geolocator: ^8.2.0      #GeoLocalização
+  geocoding: ^2.0.4
 
 dev_dependencies:
   flutter_test:
