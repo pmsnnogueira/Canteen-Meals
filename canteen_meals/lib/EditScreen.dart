@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 
 import 'Meal.dart';
 import 'AppConstant.dart';
+import 'main.dart';
 
 class EditScreen extends StatefulWidget {
   final Meal meal;
@@ -144,7 +145,10 @@ class _EditScreenState extends State<EditScreen> {
                       ),
                     ),
                   ),
-                  onPressed: () => updateMeal(true),
+                  onPressed: () {
+                    updateMeal(true);
+                    widget.meal.mealUpdate = false;
+                  },//Voltar ao menu original
                   child: Text(
                     AppConstant.RESET_ORIGINAL_LABEL.toUpperCase(),
                     style: const TextStyle(

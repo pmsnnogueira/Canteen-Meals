@@ -32,7 +32,7 @@ class Meal{
         originalVegetarian = json[AppConstant.ORIGINAL_JSON] ? [AppConstant.VEGETARIAN_JSON] ?? '',
         originalDesert =  json[AppConstant.ORIGINAL_JSON] ? [AppConstant.DESERT_JSON] ?? '',
 
-        mealUpdate = (json[AppConstant.UPDATE_JSON] ? [AppConstant.WEEKDAY_JSON] ?? '').isNotEmpty{
+        mealUpdate = (json[AppConstant.UPDATE_JSON] ? [AppConstant.SOUP_JSON] ?? '').isNotEmpty{
         updatedImg = json[AppConstant.UPDATE_JSON] ? [AppConstant.IMG_JSON] ?? '';
         updatedWeekDay = json[AppConstant.UPDATE_JSON] ? [AppConstant.WEEKDAY_JSON] ?? '';
         updatedSoup = json[AppConstant.UPDATE_JSON] ? [AppConstant.SOUP_JSON] ?? '';
@@ -48,11 +48,18 @@ class Meal{
       Map map;
 
       if(original == true) {
-
-        map = {'weekDay':null};
-
+        map = {
+          'img' : null,
+          'weekDay': input[0],
+          'soup': "",
+          'fish': "",
+          'meat': "",
+          'vegetarian': "",
+          'desert': "",
+        };
       }else {
         map = {
+          'img' : "",
           'weekDay': input[0],
           'soup': input[1],
           'fish': input[3],
@@ -82,21 +89,24 @@ class Meal{
     }
 
     Map<String , dynamic> toJson() => {
-        '"original"':{
-          '"weekDay"':'"$originalWeekDay"',
-          '"soup"':'"$originalWeekDay"',
-          '"meat"':'"$originalWeekDay"',
-          '"fish"':'"$originalWeekDay"',
-          '"vegetarian"':'"$originalWeekDay"',
-          '"desert"':'"$originalWeekDay"',
-        },
-        '"update"':(updatedWeekDay.isEmpty)?null:{   //Mudar isto
-          '"weekDay"':'"$originalWeekDay"',
-          '"soup"' : '"$originalWeekDay"',
-          '"meat"' : '"$originalWeekDay"',
-          '"fish"' : '"$originalWeekDay"',
-          '"vegetarian"':'"$originalWeekDay"',
-          '"desert"' : '"$originalWeekDay"'
+        '"MONDAY"': {
+          '"original"': {
+            '"img"': null,
+            '"weekDay"': '"$originalWeekDay"',
+            '"soup"': '"$originalSoup"',
+            '"meat"': '"$originalMeat"',
+            '"fish"': '"$originalFish"',
+            '"vegetarian"': '"$originalVegetarian"',
+            '"desert"': '"$originalDesert"',
+          },
+          '"update"': (updatedWeekDay.isEmpty) ? "null}" : { //Mudar isto
+            '"weekDay"': '"$originalWeekDay"',
+            '"soup"': '"$originalWeekDay"',
+            '"meat"': '"$originalWeekDay"',
+            '"fish"': '"$originalWeekDay"',
+            '"vegetarian"': '"$originalWeekDay"',
+            '"desert"': '"$originalWeekDay"'
+          },
         },
     };
 }

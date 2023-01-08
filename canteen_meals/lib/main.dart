@@ -1,6 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
-import 'package:canteen_meals/GeoLocation.dart';
+import 'dart:typed_data';
 import 'package:canteen_meals/Meal.dart';
 import 'package:canteen_meals/MyWidgets.dart';
 import 'package:flutter/material.dart';
@@ -51,9 +51,6 @@ class MyHomePage extends StatefulWidget {
 
 
 
-
-
-
 class _MyHomePageState extends State<MyHomePage> {
   DateTime today = DateTime.now();    //Proprio dia que nunca é mudado
   DateTime date = DateTime.now();     //date alteravel
@@ -69,14 +66,18 @@ class _MyHomePageState extends State<MyHomePage> {
   Future<void> _fetchMeals() async {
     try {
       setState(() => _fetchingData = true);
+
       http.Response response = await http.get(Uri.parse(AppConstant.MEALS_URL));
-      //debugPrint(${response.statusCode.toString()}");
+
       if (response.statusCode == HttpStatus.ok) { // import do dart.io, não do html
         final mealsData = json.decode(utf8.decode(response.body.codeUnits));
+        saveMeals(response.bodyBytes);
+
         final meals = <Meal>[];
         mealsData.forEach((weekDay, data) {
           final meal = Meal.fromJson(data);
           meals.add(meal);
+
         });
         setState(() => _meals = meals);
       }
@@ -87,38 +88,47 @@ class _MyHomePageState extends State<MyHomePage> {
     }
   }
 
-  saveMeals() async{
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    List<String> mealStrings = [];
-    String jsonString = '{"original":{"weekDay":"MONDAY","soup":"abobora"},"update":null}';       //Ter atencao aos " "
-    //mealStrings.add(jsonString);
-    for(Meal meal in _meals!){
-      //final mealJson = jsonEncode(meal.toJson());
-       mealStrings.add(meal.toJson().toString());
-      //final mealUtf8 = utf8.encode(mealJson);
-    }
-    debugPrint(mealStrings[0]);
-    //final mealsData = json.encode(jsonString);
 
-    prefs.setStringList('meals', mealStrings);
+  Future<void> _fetchLoadMeals() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    try {
+      setState(() => _fetchingData = true);
+
+      if(prefs.containsKey('listMeals') == true){
+        final Uint8List response = await loadMeals();
+
+        final mealsData = json.decode(utf8.decode(response));
+        final meals = <Meal>[];
+
+        mealsData.forEach((weekDay, data) {
+          final meal = Meal.fromJson(data);
+          meals.add(meal);
+        });
+        setState(() => _meals = meals);
+      }else{
+        setState(() {
+          _fetchingData = false;
+        });
+      }
+
+    } catch (e) {
+      debugPrint('Something went wrong: $e');
+    } finally {
+      setState(() => _fetchingData = false);
+    }
   }
 
-  Future<void> loadMeals() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    List<String>? mealStrings = prefs.getStringList('meals');
-    //List<Meal> meals = [];
 
-    if(mealStrings == null){
-      return;
-    }
-    Map<String, dynamic> json;
-    debugPrint(mealStrings![0]);
-    for(String mealString in mealStrings!){
-      json = jsonDecode(utf8.decode(mealString.codeUnits));
-      final meal = Meal.fromJson(json);
-      _meals?.add(meal);
-    }
-    return;
+  static Future<bool> saveMeals(Uint8List meals) async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    String base64Image = base64Encode(meals);
+    return prefs.setString("listMeals", base64Image);
+  }
+
+  static Future<Uint8List> loadMeals() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    Uint8List bytes = base64Decode(prefs.getString("listMeals") ?? '');
+    return bytes;
   }
 
   Future<bool> _handleLocationPermission() async {
@@ -164,19 +174,39 @@ class _MyHomePageState extends State<MyHomePage> {
     actualMonday = today.weekday == 7 ? today.add(const Duration(days: 1)) : today.subtract(Duration(days: today.weekday - 1));
     dateText = DateFormat(AppConstant.DATE_FORMAT).format(today);
 
-    Future<bool> geoLocal = _handleLocationPermission();
+
+    if(today.weekday == 7){
+      date = date.add(const Duration(days:1));
+      today = today.add(const Duration(days: 1));
+    }
+    if(today.weekday == 6){
+      date = date.add(const Duration(days:2));
+      today = today.add(const Duration(days: 2));
+    }
+    dateText = DateFormat(AppConstant.DATE_FORMAT).format(date);
+
+
+
+    /*Future<bool> geoLocal = _handleLocationPermission();
     _getCurrentPosition();
     debugPrint(_currentAddress);
-    debugPrint(_currentPosition.toString());
+    debugPrint(_currentPosition.toString());*/
     //_meals = getSavedMeals();
    
     //_fetchMeals();
     //saveMeals();
 
     //loadMeals();
+    //meals();
+    _fetchLoadMeals();
+
+  }
+
+  Future<void> meals() async {
+    await _fetchLoadMeals();
     if(_meals!.isEmpty){
-      _fetchMeals();
-      saveMeals();
+      await _fetchMeals();
+      //await saveMeals();
     }
   }
 
@@ -327,7 +357,16 @@ class _MyHomePageState extends State<MyHomePage> {
               ),
             ),
           ],
-        )
-      );
+        ),
+        floatingActionButton: Row(
+        mainAxisAlignment: MainAxisAlignment.end,
+        children: [
+          FloatingActionButton(
+            onPressed: _fetchMeals,
+            tooltip: 'Refresh',
+            child: const Icon(Icons.refresh),)
+        ],
+      ), // This trailing comma makes auto-formatting nicer for build methods.
+    );
   }
 }
