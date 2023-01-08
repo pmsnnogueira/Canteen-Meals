@@ -7,7 +7,8 @@ class AppConstant{
   static const String ROUTENAME_EDIT_SCREEN = '/EditScreen';
 
   ///This is used to connect the android emulator with the pc localhost
-  static const String MEALS_URL = "http://10.0.2.2:8080/menu";
+  static const String MEALS_URL = "http://192.168.1.211:8080/menu";
+  static const String IMAGE_URL = "http://192.168.1.211:8080/images/";
   ///Link for the professor public server with the json file
   ///Professor Github link: https://github.com/ansisec
   //static const String MEALS_URL = "http://amov.servehttp.com:8080/menu";

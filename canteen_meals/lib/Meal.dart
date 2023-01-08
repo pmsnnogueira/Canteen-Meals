@@ -32,7 +32,7 @@ class Meal{
         originalVegetarian = json[AppConstant.ORIGINAL_JSON] ? [AppConstant.VEGETARIAN_JSON] ?? '',
         originalDesert =  json[AppConstant.ORIGINAL_JSON] ? [AppConstant.DESERT_JSON] ?? '',
 
-        mealUpdate = (json[AppConstant.UPDATE_JSON] ? [AppConstant.SOUP_JSON] ?? '').isNotEmpty{
+        mealUpdate = (json[AppConstant.UPDATE_JSON] ? [AppConstant.IMG_JSON] ?? '').isNotEmpty{
         updatedImg = json[AppConstant.UPDATE_JSON] ? [AppConstant.IMG_JSON] ?? '';
         updatedWeekDay = json[AppConstant.UPDATE_JSON] ? [AppConstant.WEEKDAY_JSON] ?? '';
         updatedSoup = json[AppConstant.UPDATE_JSON] ? [AppConstant.SOUP_JSON] ?? '';
@@ -46,7 +46,7 @@ class Meal{
 
       String url = AppConstant.MEALS_URL;
       Map map;
-
+      debugPrint(original.toString());
       if(original == true) {
         map = {
           'img' : null,
@@ -59,7 +59,7 @@ class Meal{
         };
       }else {
         map = {
-          'img' : "",
+          'img' : input[7],
           'weekDay': input[0],
           'soup': input[1],
           'fish': input[3],
@@ -68,15 +68,15 @@ class Meal{
           'desert': input[5],
         };
       }
+      debugPrint(map.toString());
       debugPrint(await apiRequest(url, map));
 
     }
 
     static Future<String> apiRequest(String url , Map jsonMap) async{
 
-
       HttpClient httpClient = HttpClient();
-      debugPrint(jsonMap[0]);
+      debugPrint(jsonMap.toString());
       HttpClientRequest request = await httpClient.postUrl(Uri.parse(url));
       request.headers.contentType = ContentType("application", "json", charset: "UTF-8");
       request.add(utf8.encode(json.encode(jsonMap)));
@@ -99,7 +99,7 @@ class Meal{
             '"vegetarian"': '"$originalVegetarian"',
             '"desert"': '"$originalDesert"',
           },
-          '"update"': (updatedWeekDay.isEmpty) ? "null}" : { //Mudar isto
+          '"update"': (updatedWeekDay.isEmpty) ? "null" : {
             '"weekDay"': '"$originalWeekDay"',
             '"soup"': '"$originalWeekDay"',
             '"meat"': '"$originalWeekDay"',

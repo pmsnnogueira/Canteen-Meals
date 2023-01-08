@@ -27,7 +27,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: AppConstant.APP_NAME,
       theme: ThemeData(
-        primarySwatch: Colors.container,
+        primarySwatch: Colors.blue,
       ),
       initialRoute: MyHomePage.routeName,
       routes:{
@@ -58,7 +58,6 @@ class _MyHomePageState extends State<MyHomePage> {
   late String dateText = ' ';
   String? _currentAddress;
   Position? _currentPosition;
-
 
   /// This functions connects with the website and converts the json to an list of meals.
   List<Meal>? _meals = [];
@@ -106,6 +105,7 @@ class _MyHomePageState extends State<MyHomePage> {
         });
         setState(() => _meals = meals);
       }else{
+        _fetchMeals();
         setState(() {
           _fetchingData = false;
         });

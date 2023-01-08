@@ -1,6 +1,8 @@
 import 'dart:convert';
+import 'dart:io';
 import 'package:canteen_meals/Meal.dart';
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
 
 import 'AppConstant.dart';
 
@@ -10,9 +12,10 @@ class MealsOriginalWidget extends StatefulWidget{
   var decodedBytes;
   MealsOriginalWidget(this.meal){
     if(meal.originalImg.isNotEmpty) {
-      decodedBytes = base64Decode(meal.originalImg);
+      decodedBytes = NetworkImage(AppConstant.IMAGE_URL+meal.originalImg);
     }
   }
+
   @override
   _MealsOriginalWidget createState() => _MealsOriginalWidget();
 }
@@ -55,7 +58,7 @@ class _MealsOriginalWidget extends State<MealsOriginalWidget> {
               CircleAvatar(
                 radius: 72.0,
                 backgroundColor: Colors.transparent,
-                backgroundImage:MemoryImage(widget.decodedBytes),
+                backgroundImage:widget.decodedBytes,
                 ),
             },
             const SizedBox(
@@ -125,8 +128,8 @@ class MealsUpdatedWidget extends StatefulWidget{
   final Meal meal;
   var decodedBytes;
   MealsUpdatedWidget(this.meal){
-    if(meal.originalImg.isNotEmpty) {
-      decodedBytes = base64Decode(meal.originalImg);
+    if(meal.updatedImg.isNotEmpty) {
+      decodedBytes = NetworkImage(AppConstant.IMAGE_URL+meal.updatedImg);
     }
   }
 
@@ -172,7 +175,7 @@ class _MealsUpdatedWidget extends State<MealsUpdatedWidget> {
               CircleAvatar(
                 radius: 72.0,
                 backgroundColor: Colors.transparent,
-                backgroundImage:MemoryImage(widget.decodedBytes),
+                backgroundImage:widget.decodedBytes,
               ),
             },
             Text(widget.meal.updatedWeekDay,

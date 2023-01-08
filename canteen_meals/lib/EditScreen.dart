@@ -1,10 +1,12 @@
+import 'dart:convert';
+
 import 'package:canteen_meals/AppConstant.dart';
 import 'package:canteen_meals/MyWidgets.dart';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
+import 'dart:io';
 
 import 'Meal.dart';
-import 'AppConstant.dart';
-import 'main.dart';
 
 class EditScreen extends StatefulWidget {
   final Meal meal;
@@ -18,6 +20,9 @@ class EditScreen extends StatefulWidget {
 }
 class _EditScreenState extends State<EditScreen> {
 
+  String _image = '';
+  final imagePicker = ImagePicker();
+
   //final updatedImg = TextEditingController();
   final updatedSoup = TextEditingController();
   final updatedMeat = TextEditingController();
@@ -25,6 +30,15 @@ class _EditScreenState extends State<EditScreen> {
   final updatedVegetarian = TextEditingController();
   final updatedDesert = TextEditingController();
   //bool isValid = true;
+
+  Future getImage() async {
+    final image = await imagePicker.pickImage(source: ImageSource.camera);
+    setState(() {
+      File temp = File(image!.path);
+      _image = base64Encode(temp.readAsBytesSync());
+      widget.meal.updatedImg = _image;
+    });
+  }
 
   void clearInput(){
     setState(() {
@@ -56,6 +70,11 @@ class _EditScreenState extends State<EditScreen> {
       inputs.add((updatedDesert.text.isNotEmpty) ?
         updatedDesert.text : widget.meal.originalDesert);
 
+      inputs.add((updatedDesert.text.isNotEmpty) ?
+      updatedDesert.text : widget.meal.originalDesert);
+
+      inputs.add((_image.isNotEmpty) ? _image : '');
+
       Meal.mealPost(inputs , original);
 
       clearInput();
@@ -83,6 +102,14 @@ class _EditScreenState extends State<EditScreen> {
               ),
             ),
             MealsOriginalWidget(widget.meal),
+            if(_image.isNotEmpty)...{
+              CircleAvatar(
+                radius: 72.0,
+                backgroundColor: Colors.transparent,
+                backgroundImage:MemoryImage(base64Decode(_image)),
+              ),
+            },
+            ElevatedButton(onPressed: getImage, child:const Text("Add Image")),
             const Text(
               AppConstant.UPDATED_MEAL_LABEL,
               style: TextStyle(
@@ -187,4 +214,5 @@ class _EditScreenState extends State<EditScreen> {
       ),
     );
   }
+
 }
