@@ -5,6 +5,8 @@ import 'package:canteen_meals/MyWidgets.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
+import 'package:location/location.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 
 import 'Meal.dart';
 
@@ -19,6 +21,69 @@ class EditScreen extends StatefulWidget {
   State<EditScreen> createState() => _EditScreenState();
 }
 class _EditScreenState extends State<EditScreen> {
+
+  double latitude = 0.0, longitude = 0.0;
+  Location location = Location();
+  bool _serviceEnabled = false;
+  PermissionStatus _permissionGranted = PermissionStatus.denied;
+  late LocationData _locationData;
+  @override
+  void initState() {
+    super.initState();
+    initLocation();
+  }
+
+  Future<void> initLocation() async {
+    _serviceEnabled = await location.serviceEnabled();
+    if (!_serviceEnabled) {
+      _serviceEnabled = await location.requestService();
+      if (!_serviceEnabled) {
+        return;
+      }
+    }
+
+    _permissionGranted = await location.hasPermission();
+    if (_permissionGranted == PermissionStatus.denied) {
+      _permissionGranted = await location.requestPermission();
+      if (_permissionGranted != PermissionStatus.granted) {
+        return;
+      }
+    }
+    setState(() {});
+    location.onLocationChanged.listen((LocationData currentLocation) {
+      setState(() {
+        latitude = currentLocation.latitude ?? 0;
+        longitude = currentLocation.longitude ?? 0;
+        var latDiff = latitude - isecLatitude;
+        var longDiff = longitude - isecLongitude;
+        debugPrint("lat: $latitude\nlong: $longitude");
+        if((latDiff > - 0.01 || latDiff < 0.01) &&  (longDiff > - 0.01 || longDiff < 0.01)) {
+          updateAvailable = true;
+        } else {
+          updateAvailable = false;
+        }
+      });
+    });
+  }
+
+  bool updateAvailable = false;
+
+  double isecLatitude = 40.192860490691935;
+  double isecLongitude = -8.412703369001143;
+
+
+  Future<void> _getCoordinates() async {
+    if (!_serviceEnabled || _permissionGranted != PermissionStatus.granted) {
+      return;
+    }
+    _locationData = await location.getLocation();
+    setState(() {
+      latitude = _locationData.latitude ?? 0.0;
+      longitude = _locationData.longitude ?? 0.0;
+    });
+  }
+
+
 
   String _image = '';
   final imagePicker = ImagePicker();
@@ -51,6 +116,22 @@ class _EditScreenState extends State<EditScreen> {
   }
 
   void updateMeal(bool original){
+    if(!updateAvailable) {
+      final scaffold = ScaffoldMessenger.of(context);
+      scaffold.showSnackBar(
+        const SnackBar(
+          content: Text('To far away from the canteen')
+        ),
+      );
+    } else {
+      final scaffold = ScaffoldMessenger.of(context);
+      scaffold.showSnackBar(
+        const SnackBar(
+            content: Text('Updated successfully')
+        ),
+      );
+    }
+
     setState(() {
       List<String> inputs = [];
       inputs.add(widget.meal.originalWeekDay);
