@@ -192,7 +192,7 @@ class _EditScreenState extends State<EditScreen> {
             },
             ElevatedButton(onPressed: getImage, child:const Text("Add Image")),
             const Text(
-              AppConstant.UPDATED_MEAL_LABEL,
+              AppConstant.UPDATE_MEAL_LABEL,
               style: TextStyle(
                 fontSize: 20,
                 fontWeight: FontWeight.bold,
